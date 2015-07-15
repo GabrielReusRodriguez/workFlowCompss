@@ -13,9 +13,9 @@ public class Simulacion{
 	public static int NUM_STEPS=0;
 	public static int SIZE_STEPS=0;
 	
-	private static boolean[][] matriu;
+	//private static boolean[][] matriu;
 	private static String carpeta = "./data/";
-	private static List<String> pasos = new ArrayList<String>();
+	//private static List<String> pasos = new ArrayList<String>();
 	
 	
 	public static void main(String[] args){
