@@ -3,10 +3,6 @@ package workflow.compss.bsc.es;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import workflow.compss.bsc.es.coreelements.SimulacionImpl;
 
 public class Simulacion{
 	
@@ -20,13 +16,15 @@ public class Simulacion{
 	
 	public static void main(String[] args){
 
-		if ( args.length != 2 ) {
-			System.out.println("Usage: java Simulacion <num_steps> <size_step>  \n");
+		if ( args.length != 3 ) {
+			System.out.println("Usage: java Simulacion <num_steps> <size_step>  <data_folder>\n");
 			return;
 		}	
 		
 		NUM_STEPS = Integer.parseInt(args[0]);
 		SIZE_STEPS = Integer.parseInt(args[1]);
+		carpeta = args[2];
+		Resultado  resultado = new Resultado();
 		
 			for (int i = 0; i < NUM_STEPS; i++){
 				for (int j = 0; j < SIZE_STEPS; j++){
@@ -37,7 +35,7 @@ public class Simulacion{
 						e.printStackTrace();
 						continue;
 					}
-					if ( i != 0 && (i+1) % 2 == 0){
+					if ( (i+1) % 2 == 0){
 						try{
 						SimulacionImpl.analiza(carpeta+"sim_"+(i-1)+"."+j+".out", carpeta+"sim_"+i+"."+j+".out", carpeta+"analisis_"+(i-1)+"."+i);
 						}catch(SimulacionAppException e){
@@ -48,21 +46,25 @@ public class Simulacion{
 				}
 			}
 			int num_analisis_validos = 0;
-			for (int i = 0; i < NUM_STEPS; i++){
-				boolean conclusion = false;
+			for (int i = 0; i < NUM_STEPS-1; i++){
 				try{
-					SimulacionImpl.extraeConclusiones(carpeta+"analisis_"+(i-1)+"."+i,conclusion);
+					SimulacionImpl.extraeConclusiones(carpeta+"analisis_"+i+"."+(i+1),resultado);
 				}catch(SimulacionAppException e){
 					e.printStackTrace();
-					conclusion = false;
+					resultado.setResultadoValido(false);
 				}
-				if(conclusion){
+				if(resultado.isResultadoValido()){
 					num_analisis_validos++;
 				}
 			}
-			if(num_analisis_validos > (float)NUM_STEPS / 2.0f){
-				System.out.println("Analisis valido");
-			}			
+			
+			//Escribo ressultados
+			try {
+				SimulacionImpl.escribeConclusion(carpeta+"resultados.txt", num_analisis_validos, NUM_STEPS);
+			} catch (SimulacionAppException e) {
+				e.printStackTrace();
+			}
+			
 		
 	}
 	

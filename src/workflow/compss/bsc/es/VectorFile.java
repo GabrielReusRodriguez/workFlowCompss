@@ -115,6 +115,19 @@ public class VectorFile {
 	}
 	
 	public boolean extraeConclusiones(){
-		return true;
+		int num_valido =0;
+		for (int i = 0; i < data.length; i++) {
+			if(data[i] > 10.0f){
+				num_valido++;
+			}else{
+				
+			}
+		}
+		
+		if((float)num_valido > (float)data.length/2.0f ){
+			return true;
+		}else{
+			return false;
+		}
 	}
 }
