@@ -11,33 +11,39 @@ public class Simulacion{
 	
 	//private static boolean[][] matriu;
 	private static String carpeta = "./data/";
+	private static String carpeta_resultados = "./data/";
 	//private static List<String> pasos = new ArrayList<String>();
 	
 	
 	public static void main(String[] args){
 
-		if ( args.length != 3 ) {
-			System.out.println("Usage: java Simulacion <num_steps> <size_step>  <data_folder>\n");
+		if ( args.length != 4 ) {
+			System.out.println("Usage: java Simulacion <num_steps> <size_step>  <data_folder> <data_result_folder>\n");
+			System.out.println("Num argumentos: "+args.length+"\n");
 			return;
 		}	
 		
 		NUM_STEPS = Integer.parseInt(args[0]);
 		SIZE_STEPS = Integer.parseInt(args[1]);
 		carpeta = args[2];
+		carpeta_resultados = args[3];
+		
+		
 		Resultado  resultado = new Resultado();
 		
 			for (int i = 0; i < NUM_STEPS; i++){
 				for (int j = 0; j < SIZE_STEPS; j++){
-					String fileName = carpeta+"sim_"+i+"." + j; 
+					String fileName = carpeta+"sim_"+i+"." + j;
+					String fileName_out = carpeta_resultados+"sim_"+i+"." + j; 
 					try{
-						SimulacionImpl.simulaPaso(fileName+".in", fileName+".out");
+						SimulacionImpl.simulaPaso(fileName+".in", fileName_out+".out");
 					}catch(SimulacionAppException e){
 						e.printStackTrace();
 						continue;
 					}
 					if ( (i+1) % 2 == 0){
 						try{
-						SimulacionImpl.analiza(carpeta+"sim_"+(i-1)+"."+j+".out", carpeta+"sim_"+i+"."+j+".out", carpeta+"analisis_"+(i-1)+"."+i);
+						SimulacionImpl.analiza(carpeta_resultados+"sim_"+(i-1)+"."+j+".out", carpeta_resultados+"sim_"+i+"."+j+".out", carpeta+"analisis_"+(i-1)+"."+i);
 						}catch(SimulacionAppException e){
 							e.printStackTrace();
 							continue;
@@ -48,7 +54,7 @@ public class Simulacion{
 			int num_analisis_validos = 0;
 			for (int i = 0; i < NUM_STEPS-1; i++){
 				try{
-					SimulacionImpl.extraeConclusiones(carpeta+"analisis_"+i+"."+(i+1),resultado);
+					SimulacionImpl.extraeConclusiones(carpeta_resultados+"analisis_"+i+"."+(i+1),resultado);
 				}catch(SimulacionAppException e){
 					e.printStackTrace();
 					resultado.setResultadoValido(false);
@@ -60,7 +66,7 @@ public class Simulacion{
 			
 			//Escribo ressultados
 			try {
-				SimulacionImpl.escribeConclusion(carpeta+"resultados.txt", num_analisis_validos, NUM_STEPS);
+				SimulacionImpl.escribeConclusion(carpeta_resultados+"resultados.txt", num_analisis_validos, NUM_STEPS);
 			} catch (SimulacionAppException e) {
 				e.printStackTrace();
 			}
